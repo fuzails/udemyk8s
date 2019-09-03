@@ -7,3 +7,11 @@ before_install:
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components update kubectl
   - gcloud auth activate-service-account --key-file service-account.json
+  - gcloud config set project intense-sled-251710
+  - gcloud config set compute/zone europe-west1-b
+  - gcloud container clusters get-credentials udemyk8s
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t fuzails/udemyk8s -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true fuzails/udemyk8s npm run test
